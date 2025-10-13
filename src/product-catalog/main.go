@@ -251,12 +251,12 @@ func (p *productCatalog) GetProduct(ctx context.Context, req *pb.GetProductReque
 	)
 
 	// GetProduct will fail on a specific product when feature flag is enabled
-	if p.checkProductFailure(ctx, req.Id) {
-		msg := fmt.Sprintf("Error: Product Catalog Fail Feature Flag Enabled")
-		span.SetStatus(otelcodes.Error, msg)
-		span.AddEvent(msg)
-		return nil, status.Errorf(codes.Internal, msg)
-	}
+       if p.checkProductFailure(ctx, req.Id) {
+	       msg := "Error: Product Catalog Fail Feature Flag Enabled"
+	       span.SetStatus(otelcodes.Error, msg)
+	       span.AddEvent(msg)
+	       return nil, status.Errorf(codes.Internal, msg)
+       }
 
 	var found *pb.Product
 	for _, product := range catalog {
@@ -309,12 +309,9 @@ func (p *productCatalog) checkProductFailure(ctx context.Context, id string) boo
 	return failureEnabled
 }
 
-func createClient(ctx context.Context, svcAddr string) (*grpc.ClientConn, error) {
-	return grpc.DialContext(ctx, svcAddr,
-		grpc.WithTransportCredentials(insecure.NewCredentials()),
-		grpc.WithStatsHandler(otelgrpc.NewClientHandler()),
-	)
-}
+// func createClient(ctx context.Context, svcAddr string) (*grpc.ClientConn, error) {
+//     TODO: grpc.DialContext is deprecated, use NewClient when updating grpc version and refactor usages accordingly.
+// }
 
 
 
